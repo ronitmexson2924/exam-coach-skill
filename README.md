@@ -187,27 +187,6 @@ exam-study-coach/
 
 ---
 
-## Publishing your own copy to GitHub
-
-1. Create an empty public repository on GitHub named `exam-study-coach`.
-2. Replace `YOUR-GITHUB-USERNAME` and `YOUR-NAME` in `README.md`, `LICENSE`, `.claude-plugin/marketplace.json` and `plugins/exam-study-coach/.claude-plugin/plugin.json`.
-3. Push the folder:
-
-```bash
-cd exam-study-coach
-git init
-git add .
-git commit -m "Exam Study Coach v2.0.0"
-git branch -M main
-git remote add origin https://github.com/YOUR-GITHUB-USERNAME/exam-study-coach.git
-git push -u origin main
-```
-
-4. Optional: if you have Claude Code installed, run `claude plugin validate .` to check the manifests.
-5. Share the two install commands from Option A.
-
----
-
 ## Privacy
 
 Your materials and progress stay in your own project folder. `.gitignore` excludes `study-state/` and the material folders, so you won't accidentally publish your notes or progress if your exam folder is also a git repo.
