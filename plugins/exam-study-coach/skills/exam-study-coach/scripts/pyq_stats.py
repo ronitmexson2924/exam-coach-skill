@@ -9,6 +9,8 @@ Counting rules:
 - Subparts of the same question (same paper_file + q_no) count as ONE
   appearance per topic, so a 3-part question on one topic is not triple-counted.
 - Marks are summed per subpart, and only where the marks cell is a number.
+  A subpart mapped to several topics splits its marks equally between them,
+  so the per-topic totals add up to the marks actually on the papers.
 - 'distinct_papers' counts different paper files containing the topic.
 """
 import argparse
@@ -46,14 +48,16 @@ def main() -> None:
             qno = (row.get("q_no") or "").strip()
             topics = [t.strip() for t in (row.get("topic_ids") or "").split(";") if t.strip()]
             yr = year_of(row.get("exam_session_year", ""))
+            try:
+                share = float(row.get("marks") or "") / len(topics) if topics else None
+            except ValueError:
+                share = None
             for t in topics:
                 appearances[t].add((paper, qno))
                 papers[t].add(paper)
-                try:
-                    marks[t] += float(row.get("marks") or "")
+                if share is not None:
+                    marks[t] += share
                     marks_known[t] += 1
-                except ValueError:
-                    pass
                 if yr and (t not in latest or yr > latest[t]):
                     latest[t] = yr
                 qtype = (row.get("type") or "").strip()

@@ -39,13 +39,20 @@ def parse_weights(text):
         return dict(DEFAULT_WEIGHTS)
     weights = {}
     for part in text.split(","):
-        key, val = part.split("=")
+        key, sep, val = part.partition("=")
         key = key.strip()
         if key not in DIMS:
             raise SystemExit(f"unknown dimension '{key}'; use {DIMS}")
-        weights[key] = float(val)
+        try:
+            weights[key] = float(val)
+        except ValueError:
+            raise SystemExit(f"bad weight '{part.strip()}'; use name=number, e.g. frequency=30")
+        if weights[key] < 0:
+            raise SystemExit(f"weight for '{key}' must not be negative")
     for d in DIMS:
         weights.setdefault(d, 0.0)
+    if not sum(weights.values()):
+        raise SystemExit("all weights are zero")
     return weights
 
 

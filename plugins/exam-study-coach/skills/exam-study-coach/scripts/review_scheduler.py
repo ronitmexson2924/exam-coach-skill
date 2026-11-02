@@ -2,8 +2,9 @@
 """Spaced-repetition scheduler for study-state/progress.csv.
 
 Usage:
-    # list topics due for review today (or on --today)
+    # list topics due for review today (or on --today); with --priority, P1 first
     python3 review_scheduler.py due study-state/progress.csv [--today 2026-11-02]
+        [--priority study-state/priority.csv]
 
     # record a review or check result and schedule the next one
     python3 review_scheduler.py update study-state/progress.csv TOPIC_ID --result pass|fail
@@ -11,7 +12,9 @@ Usage:
 
 Intervals: 1, 3, 7, 14, 30 days. A pass moves to the next interval; a fail resets
 to 1 day and sets status to 'Revision due'. If --exam-date is given, the next
-review is moved earlier so it lands no later than the day before the exam.
+review is moved earlier so it lands no later than the day before the exam. On
+the day before the exam (or later) there is no review day left, so next_review
+is left blank instead of rescheduling the topic for today.
 """
 import argparse
 import csv
@@ -52,12 +55,14 @@ def next_interval(current, passed):
 
 def cmd_due(args):
     today = parse_day(args.today)
+    labels = {p.get("topic_id"): p.get("label", "") for p in load(args.priority)} if args.priority else {}
     due = []
     for r in load(args.progress):
-        nr = r.get("next_review", "").strip()
+        nr = (r.get("next_review") or "").strip()
         if nr and date.fromisoformat(nr) <= today:
             due.append((date.fromisoformat(nr), r))
-    due.sort(key=lambda x: x[0])
+    # P1 first (unlabelled topics last), then the most overdue first
+    due.sort(key=lambda x: (labels.get(x[1]["topic_id"]) or "P9", x[0]))
     if not due:
         print(f"No reviews due on {today}.")
         return
@@ -65,7 +70,9 @@ def cmd_due(args):
     for d, r in due:
         overdue = (today - d).days
         tag = f" (overdue {overdue}d)" if overdue else ""
-        print(f"- {r['topic_id']}: {r.get('topic','')} [{r.get('status','')}]{tag}")
+        label = labels.get(r["topic_id"])
+        prefix = f"{label} " if label else ""
+        print(f"- {prefix}{r['topic_id']}: {r.get('topic','')} [{r.get('status','')}]{tag}")
 
 
 def cmd_update(args):
@@ -81,17 +88,21 @@ def cmd_update(args):
     if args.exam_date:
         last_ok = date.fromisoformat(args.exam_date) - timedelta(days=1)
         if nxt > last_ok:
-            nxt = max(today + timedelta(days=1), last_ok) if last_ok > today else today
-            interval = (nxt - today).days
+            if last_ok > today:
+                nxt = last_ok
+                interval = (nxt - today).days
+            else:
+                nxt = None  # no review day left before the exam
     r["last_reviewed"] = today.isoformat()
-    r["next_review"] = nxt.isoformat()
+    r["next_review"] = nxt.isoformat() if nxt else ""
     r["interval_days"] = str(interval)
     if args.status:
         r["status"] = args.status
     elif not passed:
         r["status"] = "Revision due"
     save(args.progress, rows)
-    print(f"{args.topic_id}: {args.result} -> next review {nxt} (interval {interval}d), status {r['status']}")
+    when = f"next review {nxt} (interval {interval}d)" if nxt else "no review day left before the exam"
+    print(f"{args.topic_id}: {args.result} -> {when}, status {r['status']}")
 
 
 def main():
@@ -100,6 +111,7 @@ def main():
     d = sub.add_parser("due")
     d.add_argument("progress")
     d.add_argument("--today")
+    d.add_argument("--priority")
     u = sub.add_parser("update")
     u.add_argument("progress")
     u.add_argument("topic_id")

@@ -35,18 +35,21 @@ study-state/
   outputs/              reports, flashcards, formula sheets, cheat sheets, mind maps, mocks
 ```
 
-Bundled helper scripts live in the `scripts/` folder next to this SKILL.md (Python 3, standard library only). Use them instead of doing arithmetic in your head:
+Bundled helper scripts live in the `scripts/` folder next to this SKILL.md (Python 3, standard library only). Use them instead of doing arithmetic in your head.
+
+**Paths:** run the scripts from the student's project folder, but call them by the absolute path of the folder that contains this SKILL.md (written `SKILL_DIR` below), e.g. `python3 "SKILL_DIR/scripts/priority.py" ...`. A bare `scripts/priority.py` will not resolve from the student's folder. Quote the path; it may contain spaces.
 
 | Script | Use |
 |---|---|
-| `scripts/init_state.py [PROJECT_DIR]` | Create `study-state/` with correctly-headed files (never overwrites) |
-| `scripts/pyq_stats.py study-state/question-bank.csv --out study-state/pyq-stats.csv` | Appearances, distinct papers, marks, latest year per topic |
-| `scripts/priority.py study-state/topic-scores.csv --out study-state/priority.csv [--weights ...]` | Weighted score, P1-P5 label, confidence, marks-per-hour |
-| `scripts/review_scheduler.py due study-state/progress.csv` | Topics due for spaced review |
-| `scripts/review_scheduler.py update study-state/progress.csv TOPIC_ID --result pass\|fail [--exam-date YYYY-MM-DD]` | Schedule the next review |
-| `scripts/readiness.py study-state [--exam-date ...] [--daily-hours N]` | Coverage by priority, mock trend, overdue reviews, on-track check |
+| `SKILL_DIR/scripts/init_state.py [PROJECT_DIR]` | Create `study-state/` with correctly-headed files and a `.gitignore` (never overwrites) |
+| `SKILL_DIR/scripts/pyq_stats.py study-state/question-bank.csv --out study-state/pyq-stats.csv` | Appearances, distinct papers, marks, latest year per topic |
+| `SKILL_DIR/scripts/score_from_pyq.py study-state/pyq-stats.csv study-state/topic-scores.csv` | Fill blank frequency, marks and recency scores from the stats |
+| `SKILL_DIR/scripts/priority.py study-state/topic-scores.csv --out study-state/priority.csv [--weights ...]` | Weighted score, P1-P5 label, confidence, marks-per-hour |
+| `SKILL_DIR/scripts/review_scheduler.py due study-state/progress.csv [--priority study-state/priority.csv]` | Topics due for spaced review, P1 first |
+| `SKILL_DIR/scripts/review_scheduler.py update study-state/progress.csv TOPIC_ID --result pass\|fail [--exam-date YYYY-MM-DD]` | Schedule the next review |
+| `SKILL_DIR/scripts/readiness.py study-state [--exam-date ...] [--daily-hours N]` | Coverage by priority, mock trend, overdue reviews, on-track check |
 
-`templates/exam-profile.md` is the starting template for the exam profile.
+`SKILL_DIR/templates/exam-profile.md` is the starting template for the exam profile.
 
 Rules:
 - At the start of every invocation, check for `study-state/`. If it exists, read `exam-profile.md`, `progress.csv` and the end of `session-log.md`, run the review scheduler, and resume. Re-analyze only files that are new or changed since `file-inventory.md` was written.
@@ -99,7 +102,7 @@ Extract every question and subquestion into `question-bank.csv`:
 - Multi-topic questions list every relevant topic id.
 - `choice_group`: shared label for questions that are alternatives to each other (e.g. `Q3` for Q3a OR Q3b).
 
-Then run `pyq_stats.py`. It counts subparts of the same question once per topic and sums marks only where they were read reliably. Report appearances, distinct papers, total marks, latest year, common formats and repeated patterns. Normalize equivalent wordings to one canonical topic while keeping the original wording in the bank. If only one or two papers exist, say the sample is small and avoid strong predictions.
+Then run `pyq_stats.py`. It counts subparts of the same question once per topic, sums marks only where they were read reliably, and splits a multi-topic subpart's marks equally between its topics. Report appearances, distinct papers, total marks, latest year, common formats and repeated patterns. Normalize equivalent wordings to one canonical topic while keeping the original wording in the bank. If only one or two papers exist, say the sample is small and avoid strong predictions.
 
 ### Exam blueprint
 From the papers and any instructions, derive: total marks, duration, sections, marks per question, compulsory vs optional questions, internal choice ("answer any 5 of 8", "Q3a OR Q3b"), and whether modules map to fixed questions. Record it in `exam-profile.md`. Use it to:
@@ -118,14 +121,14 @@ Labels:
 A low label never means safe to skip. The full official syllabus remains examinable unless the student provides an official exclusion.
 
 ### Scoring
-Fill in `topic-scores.csv`, scoring each dimension 0-5 from the evidence (leave blank for N/A; never invent data):
+Fill in `topic-scores.csv` with one row per syllabus topic, scoring each dimension 0-5 from the evidence (leave blank for N/A; never invent data). Run `score_from_pyq.py` to fill frequency, marks and recency from `pyq-stats.csv`; it only fills blank cells and warns about question-bank topic ids missing from the file. Score the rest yourself:
 
 | Dimension | Default weight | How to score |
 |---|---:|---|
-| frequency | 30% | share of distinct papers containing the topic (from pyq-stats) |
-| marks | 25% | marks represented relative to other topics |
+| frequency | 30% | share of distinct papers containing the topic (`score_from_pyq.py`) |
+| marks | 25% | marks represented relative to other topics (`score_from_pyq.py`) |
 | emphasis | 20% | official syllabus hours/weightage or faculty emphasis |
-| recency | 10% | how recently it appeared |
+| recency | 10% | how recently it appeared (`score_from_pyq.py`) |
 | foundational | 15% | how many other topics depend on it |
 
 Also fill `est_hours` (from syllabus hours, resource length, difficulty and the diagnostic) and `expected_marks` (expected share of the paper's marks). Set `verify=yes` for topics with unclear syllabus status.
@@ -230,7 +233,7 @@ Statuses in `progress.csv`: Not started, Learning, Practised, Revision due, Mast
 
 After each lesson, give a short check, then run `review_scheduler.py update` with pass or fail (and `--exam-date`) and set the status.
 
-**Spaced repetition:** intervals are 1, 3, 7, 14 and 30 days; a fail resets to 1 day; reviews are pulled in before the exam date. `REVIEW TODAY` runs `review_scheduler.py due`, gives a short retrieval quiz on the due topics (P1 first) and records each result.
+**Spaced repetition:** intervals are 1, 3, 7, 14 and 30 days; a fail resets to 1 day; reviews are pulled in before the exam date, and from the day before the exam no further review is scheduled. `REVIEW TODAY` runs `review_scheduler.py due` with `--priority study-state/priority.csv`, gives a short retrieval quiz on the due topics (P1 first) and records each result.
 
 `UPDATE PROGRESS` reports completed vs remaining, weak topics, due reviews, upcoming P1/P2 topics, and whether the pace fits the exam date (with the hours shortfall if not).
 

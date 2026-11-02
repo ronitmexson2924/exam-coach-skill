@@ -51,6 +51,7 @@ def main():
     if priority:
         print("## Coverage by priority")
         remaining_hours = 0.0
+        unestimated = []
         for label in ["P1", "P2", "P3", "P4", "P5"]:
             topics = [p for p in priority if p["label"] == label]
             if not topics:
@@ -61,14 +62,25 @@ def main():
                   f"({100*len(ready)/len(topics):.0f}%), {len(mastered)} mastered")
             for p in topics:
                 if progress.get(p["topic_id"], {}).get("status") not in READY:
-                    remaining_hours += num(p.get("est_hours")) or 0.0
+                    hours = num(p.get("est_hours"))
+                    if hours is None:
+                        unestimated.append(p["topic_id"])
+                    else:
+                        remaining_hours += hours
         print(f"\nEstimated hours still needed (topics not yet practised): {remaining_hours:g}")
+        if unestimated:
+            print(f"WARNING: {len(unestimated)} unfinished topic(s) have no est_hours and are not counted: "
+                  + ", ".join(unestimated[:10]) + (" ..." if len(unestimated) > 10 else ""))
         if a.exam_date and a.daily_hours:
             days_left = (date.fromisoformat(a.exam_date) - today).days
             available = max(days_left, 0) * a.daily_hours
             verdict = "ON TRACK" if available >= remaining_hours * 1.15 else "BEHIND - replan by priority/ROI"
+            if unestimated and verdict == "ON TRACK":
+                verdict = "PROVISIONAL - estimate hours for the topics above before trusting this"
             print(f"Days to exam: {days_left}; hours available: {available:g} -> {verdict} "
                   f"(includes 15% buffer)")
+        elif a.exam_date or a.daily_hours:
+            print("Pass both --exam-date and --daily-hours for the on-track check.")
     else:
         print("No priority.csv yet - run priority.py first.")
 
@@ -80,7 +92,8 @@ def main():
     if mocks:
         print("\n## Mock tests")
         pcts = []
-        for m in mocks:
+        # ISO dates sort correctly as text; the stable sort keeps file order for ties
+        for m in sorted(mocks, key=lambda m: (m.get("date") or "").strip()):
             sc, mx = num(m.get("score")), num(m.get("max_score"))
             if sc is not None and mx:
                 pct = 100 * sc / mx
@@ -97,7 +110,8 @@ def main():
     if mistakes:
         print("\n## Mistake log")
         by_type = Counter(m.get("error_type", "unknown") for m in mistakes)
-        by_topic = Counter(m.get("topic_id", "") for m in mistakes)
+        by_topic = Counter(t.strip() for m in mistakes
+                           for t in (m.get("topic_id") or "").split(";") if t.strip())
         print("- By error type: " + ", ".join(f"{k} {v}" for k, v in by_type.most_common()))
         print("- Weakest topics: " + ", ".join(f"{k} ({v})" for k, v in by_topic.most_common(5)))
 

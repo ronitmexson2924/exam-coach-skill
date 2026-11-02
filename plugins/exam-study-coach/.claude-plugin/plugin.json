@@ -1,12 +1,12 @@
 {
   "name": "exam-study-coach",
   "description": "Turns your syllabus, notes, PDFs and past papers into an evidence-ranked study plan, then teaches, quizzes, marks answers and tracks progress with spaced repetition and mock tests.",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "author": {
-    "name": "YOUR-NAME"
+    "name": "Ronit Mexson"
   },
-  "homepage": "https://github.com/YOUR-GITHUB-USERNAME/exam-study-coach",
-  "repository": "https://github.com/YOUR-GITHUB-USERNAME/exam-study-coach",
+  "homepage": "https://github.com/ronitmexson2924/exam-coach-skill",
+  "repository": "https://github.com/ronitmexson2924/exam-coach-skill",
   "license": "MIT",
   "keywords": ["exam", "study", "education", "students", "revision", "spaced-repetition"]
 }

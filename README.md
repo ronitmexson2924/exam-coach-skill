@@ -42,7 +42,7 @@ It reads your materials, ranks every syllabus topic by how much it matters, buil
 In Claude Code, run:
 
 ```
-/plugin marketplace add YOUR-GITHUB-USERNAME/exam-study-coach
+/plugin marketplace add ronitmexson2924/exam-coach-skill
 /plugin install exam-study-coach@exam-study-tools
 ```
 
@@ -53,9 +53,9 @@ Restart Claude Code, or run `/reload-plugins`, and the skill is ready.
 Download or clone this repo, then copy the skill folder into your personal skills folder:
 
 ```bash
-git clone https://github.com/YOUR-GITHUB-USERNAME/exam-study-coach.git
+git clone https://github.com/ronitmexson2924/exam-coach-skill.git
 mkdir -p ~/.claude/skills
-cp -r exam-study-coach/plugins/exam-study-coach/skills/exam-study-coach ~/.claude/skills/
+cp -r exam-coach-skill/plugins/exam-study-coach/skills/exam-study-coach ~/.claude/skills/
 ```
 
 To use it in only one project, copy it to `<your-project>/.claude/skills/` instead.
@@ -163,7 +163,7 @@ A low priority **never** means "safe to skip". Past papers are evidence, not a g
 ## What's in this repo
 
 ```
-exam-study-coach/
+exam-coach-skill/
 ├── .claude-plugin/
 │   └── marketplace.json            marketplace catalog (lets /plugin find the skill)
 ├── plugins/exam-study-coach/
@@ -173,6 +173,7 @@ exam-study-coach/
 │       ├── scripts/                helper scripts (Python 3, no extra packages)
 │       │   ├── init_state.py       creates the study-state/ folder
 │       │   ├── pyq_stats.py        topic frequency from past papers
+│       │   ├── score_from_pyq.py   fills frequency/marks/recency scores from the stats
 │       │   ├── priority.py         P1 to P5 scores and marks-per-hour
 │       │   ├── review_scheduler.py spaced-repetition schedule
 │       │   └── readiness.py        readiness snapshot
@@ -189,7 +190,7 @@ exam-study-coach/
 
 ## Privacy
 
-Your materials and progress stay in your own project folder. `.gitignore` excludes `study-state/` and the material folders, so you won't accidentally publish your notes or progress if your exam folder is also a git repo.
+Your materials and progress stay in your own project folder. `init_state.py` puts a `.gitignore` inside `study-state/`, so your progress is never committed if your exam folder is also a git repo. If you also don't want to commit your notes and papers, add `syllabus/`, `question-papers/`, `notes/`, `resources/` and `answers/` to your exam folder's own `.gitignore`.
 
 ## Academic integrity
 

@@ -26,6 +26,9 @@ MD_FILES = {
     "session-log.md": "# Session log\n\n",
 }
 
+# Keeps the student's progress out of git if their exam folder is a repo.
+GITIGNORE = "# Created by exam-study-coach: keep study progress out of git\n*\n"
+
 
 def main() -> None:
     project = Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve()
@@ -49,6 +52,11 @@ def main() -> None:
             body = template.read_text(encoding="utf-8")
         path.write_text(body or f"# {name}\n", encoding="utf-8")
         created.append(name)
+
+    gitignore = state / ".gitignore"
+    if not gitignore.exists():
+        gitignore.write_text(GITIGNORE, encoding="utf-8")
+        created.append(".gitignore")
 
     print(f"study-state ready at {state}")
     print("created: " + (", ".join(created) if created else "nothing (all files already existed)"))

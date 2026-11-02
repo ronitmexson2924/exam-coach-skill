@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.1.0 - 2026-11-02
+- Added the missing `.claude-plugin/marketplace.json`, so `/plugin marketplace add` works.
+- New `score_from_pyq.py` fills frequency, marks and recency scores from `pyq-stats.csv`.
+- `init_state.py` adds a `.gitignore` inside `study-state/` so progress is never committed.
+- `pyq_stats.py` splits a multi-topic question's marks between its topics instead of counting them in full for each.
+- `readiness.py` warns about topics with no hour estimate instead of counting them as 0 hours, and orders mocks by date.
+- `review_scheduler.py` no longer reschedules a review for the same day on the eve of the exam; `due --priority` lists P1 topics first.
+- `priority.py` gives clear errors for malformed `--weights`.
+- SKILL.md tells Claude to call scripts by the skill folder's full path.
+- Filled in author and repository details; fixed install commands in the README.
+
 ## 2.0.0 - 2026-11-02
 - Persistent `study-state/` folder so progress carries across sessions.
 - Spaced repetition (1/3/7/14/30 days) with `REVIEW TODAY`.
