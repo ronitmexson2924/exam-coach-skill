@@ -1,56 +1,61 @@
 # Exam Study Coach
 
-**A Claude skill that turns your own syllabus, notes, PDFs and previous question papers into an evidence-based exam preparation system.**
+**Give Claude your syllabus, notes and old question papers. It tells you what's important, explains topics in simple words, finds good study resources and tests you until you're ready for the exam.**
 
-It reads your materials, ranks every syllabus topic by how much it matters, builds a timetable around your exam date, teaches you one topic at a time, tests you, marks your answers and remembers your progress between sessions.
-
-> It won't just summarize your PDFs. It teaches you, tests you and tracks what you actually understand.
+It's a skill for Claude: a set of instructions that turns Claude into your personal exam coach.
 
 ---
 
-## Features
+## What it can do for you
 
-| Feature | What it does |
-|---|---|
-| **Syllabus analysis** | Extracts every module, topic and subtopic from the official syllabus, with sources |
-| **Notes and PDF analysis** | Reads lecture notes, slides and textbooks, with OCR for scanned PDFs |
-| **Question-paper analysis** | Builds a question bank from past papers and counts how often each topic appears |
-| **Exam pattern detection** | Works out marks, sections and internal choice ("answer any 5 of 8") |
-| **P1 to P5 priority ranking** | Scores topics on frequency, marks, faculty emphasis, recency and foundational value |
-| **Marks-per-hour** | Shows which topics give the most marks for the study time they need |
-| **Resource coverage map** | Shows which file and page covers each topic, and which topics have no material |
-| **Diagnostic test** | A short adaptive quiz that finds your real starting level |
-| **Study timetable** | A date-wise plan with buffers, revision cycles and mocks |
-| **Auto re-planning** | `REPLAN` rebuilds the schedule when you fall behind |
-| **Topic teaching** | Goes from beginner level to exam level with worked examples, past-paper links and answer formats |
-| **Teaching modes** | Standard, Socratic, teach-back, ELI5, viva practice and 15-minute sprints |
-| **Spaced repetition** | Reviews each topic after 1, 3, 7, 14 and 30 days, with all reviews done before the exam |
-| **Mistake log** | Tags each error by type (concept, recall, calculation, misread, presentation, time) |
-| **Mock tests** | Exam-style timed papers with a separate answer key |
-| **Answer evaluation** | Marks typed answers or **photos of handwritten answers** and shows a model answer |
-| **Readiness score** | Coverage by priority, mock trend, overdue reviews and an on-track check |
-| **Study aids** | Anki/Quizlet flashcards, formula sheets, one-page cheat sheets and mind maps |
-| **Progress across sessions** | Everything is saved in a `study-state/` folder, so you pick up where you left off |
-| **Honest by design** | Never invents topics, marks or page numbers, and never says a topic is "sure to come" |
+**Understand your material**
+- Reads the PDFs, notes, slides and syllabus you give it, including scanned pages
+- Makes a list of every topic in your syllabus
+- Looks at old question papers to see which topics come up most and for how many marks
+
+**Tell you what to study**
+- **Important topics:** ranks every topic from P1 (must study) to P5 (unclear)
+- **Simple summaries:** explains your study material in easy words
+- **Study resources:** tells you which file and page to read for each topic, plus good outside resources
+- **YouTube videos:** suggests videos for each topic (links are checked, never made up)
+- **Topic checklist:** a tick-box list of every topic so you can see your progress
+
+After it reads your files, Claude **asks you which of these you want**, so you only get what's useful to you.
+
+**Teach and test you**
+- Teaches one topic at a time, from the basics up to exam level
+- Makes a day-by-day study plan for your exam date, and updates it if you fall behind
+- Quizzes you, reminds you to revise topics before you forget them, and keeps a list of your mistakes
+- Gives you practice exams and marks your answers, even photos of handwritten ones
+- Makes flashcards, formula sheets, cheat sheets and mind maps
+
+**Remembers you**
+- Saves your progress in a `study-state/` folder, so next time it carries on where you stopped
 
 ---
 
-## Installation
+## Install it
 
-### Option A: Claude Code via GitHub (recommended)
+Pick **one** option.
 
-In Claude Code, run:
+### Option 1: Claude app (easiest)
+
+1. Download [`dist/exam-study-coach-skill.zip`](dist/exam-study-coach-skill.zip) from this repo.
+2. In Claude, go to **Settings**, find **Skills** and upload the ZIP. Turn on code execution if Claude asks.
+3. Start a chat, attach your syllabus, notes and papers, and say *"help me prepare for my exam"*.
+
+### Option 2: Claude Code, from GitHub
+
+In Claude Code, type:
 
 ```
 /plugin marketplace add ronitmexson2924/exam-coach-skill
 /plugin install exam-study-coach@exam-study-tools
 ```
 
-Restart Claude Code, or run `/reload-plugins`, and the skill is ready.
+Then restart Claude Code (or type `/reload-plugins`).
 
-### Option B: Claude Code, manual copy
-
-Download or clone this repo, then copy the skill folder into your personal skills folder:
+### Option 3: Claude Code, copy the folder
 
 ```bash
 git clone https://github.com/ronitmexson2924/exam-coach-skill.git
@@ -58,105 +63,100 @@ mkdir -p ~/.claude/skills
 cp -r exam-coach-skill/plugins/exam-study-coach/skills/exam-study-coach ~/.claude/skills/
 ```
 
-To use it in only one project, copy it to `<your-project>/.claude/skills/` instead.
-
-### Option C: Claude app (claude.ai, desktop or web)
-
-1. Download `dist/exam-study-coach-skill.zip` from this repo.
-2. In Claude, open **Settings**, find the **Skills** section and upload the ZIP. Code execution must be turned on.
-3. Attach your syllabus, notes and papers in a chat and say "analyze my exam materials".
-
 ---
 
-## Quick start
+## How to use it
 
-**1. Set up your exam folder**
+**Step 1. Put your files in one folder.** Any names work; this layout just keeps things tidy:
 
 ```
 my-exam/
-├── syllabus/          official syllabus or course plan
-├── question-papers/   previous papers (CAT, FAT, mid-sem, end-sem, model papers)
-├── notes/             lecture notes and slides
-├── resources/         textbooks, handouts, reference PDFs
-└── answers/           (optional) photos of your handwritten answers
+├── syllabus/          your syllabus or course plan
+├── question-papers/   old exam papers
+├── notes/             class notes and slides
+├── resources/         textbooks and handouts
+└── answers/           (optional) photos of answers you want marked
 ```
 
-**2. Open the folder in Claude Code and start the skill**
+**Step 2. Start the coach.** In Claude Code, open the folder (`cd my-exam`, then `claude`) and type `/exam-study-coach`, or just say *"help me prepare for my exam"*. In the Claude app, attach the files to the chat.
 
-```
-cd my-exam
-claude
-```
+**Step 3. Read your exam report.** Claude reads everything and shows you the topics, how important each one is and what the exam looks like.
 
-Then type `/exam-study-coach` (or `/exam-study-coach:exam-study-coach` if installed as a plugin), or just say *"help me prepare for my exam"*.
+**Step 4. Choose the help you want.** Claude asks whether you'd like important topics, simple summaries, a resources list, YouTube videos, a topic checklist, or all of them.
 
-**3. Follow this order**
-
-1. `ANALYZE MATERIALS`: Claude reads everything and gives you the exam report.
-2. `DIAGNOSTIC`: a short quiz to find your starting level.
-3. `MAKE STUDY PLAN`: give your exam date and daily hours.
-4. `TODAY` / `START NEXT TOPIC`: learn one topic at a time.
-5. `REVIEW TODAY`: do your spaced reviews every day.
-6. `MOCK TEST`, then `EVALUATE MY ANSWER`: practise under exam conditions.
-7. `READINESS` and `LAST-DAY REVISION`: final checks.
+**Step 5. Study a little every day.** Type `TODAY` to see what to do, learn the next topic, do your revision, and take a practice exam near the end.
 
 ---
 
-## Commands
+## Things you can type
 
-You can type these exactly, or just ask in plain language.
+You can type these commands, or just ask in normal words.
 
-| Command | What it does |
+| Type this | What you get |
 |---|---|
-| `ANALYZE MATERIALS` | Reads all files (only new or changed ones on later runs) and writes the exam report |
-| `DIAGNOSTIC` | Adaptive pre-test |
-| `SHOW PRIORITY LIST` | Topics ranked P1 to P5, with evidence and marks-per-hour |
-| `EXAM PATTERN` | Marks, sections and choice structure |
-| `MAKE STUDY PLAN` | Date-wise timetable |
-| `REPLAN` | Rebuilds the plan from your real progress |
-| `TODAY` | Today's study blocks and due reviews |
-| `START NEXT TOPIC` | Teaches the next topic in the plan |
-| `TEACH: Paging` | Teaches a named topic |
-| `SOCRATIC: Deadlocks` | Teaches by asking you questions |
-| `TEACH BACK: Normalization` | You explain the topic and Claude finds the gaps |
-| `VIVA: Transistors` | Oral-exam style questioning |
+| `ANALYZE MATERIALS` | Claude reads your files and gives you the exam report |
+| `STUDY HELP` | Choose what kind of help you want |
+| `IMPORTANT TOPICS` | The most important topics, in plain words |
+| `SIMPLE SUMMARY: Chapter 3` | An easy-to-read summary of a file, topic or module |
+| `RESOURCES: Module 2` | What to study from: your files, outside resources and videos |
+| `VIDEOS: Paging` | YouTube videos for a topic |
+| `TOPIC CHECKLIST` | A tick-box list of every topic |
+| `MAKE STUDY PLAN` | A day-by-day timetable for your exam date |
+| `TODAY` | What to study today |
+| `START NEXT TOPIC` | Learn the next topic in your plan |
+| `TEACH: Deadlocks` | Learn any topic you choose |
+| `PRACTICE: Scheduling` | A quiz on a topic |
+| `REVIEW TODAY` | Revise the topics that are due today |
+| `MOCK TEST` | A timed practice exam |
+| `EVALUATE MY ANSWER` | Get your answer marked, typed or as a photo |
+| `FLASHCARDS: Module 1` | Flashcards you can use in Anki or Quizlet |
+| `CHEAT SHEET: Module 4` | A one-page summary for last-minute revision |
+| `READINESS` | How ready you are and whether you're on track |
+| `REPLAN` | A new plan if you've fallen behind |
+
+<details>
+<summary>More commands</summary>
+
+| Type this | What you get |
+|---|---|
+| `DIAGNOSTIC` | A short quiz to find your starting level |
+| `SHOW PRIORITY LIST` | The full ranking, with scores and marks-per-hour |
+| `EXAM PATTERN` | Marks, sections and choices in the exam |
+| `SOCRATIC: <topic>` | Learn by answering Claude's questions |
+| `TEACH BACK: <topic>` | You explain the topic and Claude finds the gaps |
+| `VIVA: <topic>` | Practise for an oral exam |
 | `15 MIN` | A quick session for busy days |
-| `QUICK REVISION: Module 3` | Short revision notes |
-| `SOLVE PYQ: Q4 2024` | Step-by-step solution to a past question |
-| `PRACTICE: Scheduling` | Topic quiz, with answers revealed after you try |
-| `REVIEW TODAY` | Spaced-repetition review |
-| `WEAK AREAS` / `MISTAKE REVIEW` | Drills on your weak topics and past mistakes |
-| `MOCK TEST` | Timed exam simulation |
-| `EVALUATE MY ANSWER` | Marks your typed or photographed answer |
-| `UPDATE PROGRESS` | Shows what's done, what's left and whether you're on pace |
-| `READINESS` | Readiness snapshot |
-| `FLASHCARDS: Module 2` | Creates an Anki/Quizlet CSV |
-| `FORMULA SHEET` / `CHEAT SHEET: Module 4` / `MIND MAP: Module 1` | Creates study aids |
-| `LAST-DAY REVISION` | Final high-yield plan |
+| `QUICK REVISION: <topic>` | Short revision notes |
+| `SOLVE PYQ: <question>` | Step-by-step solution to an old exam question |
+| `WEAK AREAS` / `MISTAKE REVIEW` | Practise your weak topics and past mistakes |
+| `UPDATE PROGRESS` | What's done, what's left and whether you're on pace |
+| `FORMULA SHEET` / `MIND MAP: <module>` | More study aids |
+| `LAST-DAY REVISION` | A plan for the day before the exam |
+
+</details>
 
 ---
 
-## How topics are prioritized
+## Good to know
 
-Each topic is scored 0 to 5 on five kinds of evidence, then weighted:
-
-| Evidence | Weight |
-|---|---:|
-| Frequency across past papers | 30% |
-| Marks / weightage | 25% |
-| Official syllabus or faculty emphasis | 20% |
-| Foundational importance | 15% |
-| Recency | 10% |
+**What P1 to P5 mean**
 
 | Label | Meaning |
 |---|---|
-| **P1** | Must study |
+| **P1** | Must study: comes up a lot, carries many marks, or other topics need it |
 | **P2** | High priority |
 | **P3** | Medium priority |
-| **P4** | Low observed priority |
-| **P5** | Verify: unclear syllabus status or too little evidence |
+| **P4** | Low priority, based on old papers |
+| **P5** | Not sure yet: check with your teacher |
 
-A low priority **never** means "safe to skip". Past papers are evidence, not a guarantee.
+Rankings come from how often a topic appeared in old papers, how many marks it had, what your syllabus or teacher stressed, how recently it came up, and how many other topics depend on it.
+
+- **Low priority doesn't mean skip it.** Any syllabus topic can come in the exam. Old papers are clues, not promises.
+- **It doesn't make things up.** No invented topics, marks, page numbers or links. If it can't check a video link, it gives you a YouTube search instead.
+- **Your files stay with you.** Everything is saved in your own folder. The `study-state/` folder is kept out of git automatically.
+- **It's for learning.** Don't hand in what it writes as your own graded work.
+
+**You need:** Python 3 for the helper scripts (already on most Macs and Linux computers). For scanned PDFs, OCR tools like `tesseract` help, but Claude can also read pages as images.
 
 ---
 
@@ -164,37 +164,17 @@ A low priority **never** means "safe to skip". Past papers are evidence, not a g
 
 ```
 exam-coach-skill/
-├── .claude-plugin/
-│   └── marketplace.json            marketplace catalog (lets /plugin find the skill)
+├── .claude-plugin/marketplace.json   lets Claude Code install the plugin
 ├── plugins/exam-study-coach/
-│   ├── .claude-plugin/plugin.json  plugin manifest
+│   ├── .claude-plugin/plugin.json    plugin details
 │   └── skills/exam-study-coach/
-│       ├── SKILL.md                the skill instructions
-│       ├── scripts/                helper scripts (Python 3, no extra packages)
-│       │   ├── init_state.py       creates the study-state/ folder
-│       │   ├── pyq_stats.py        topic frequency from past papers
-│       │   ├── score_from_pyq.py   fills frequency/marks/recency scores from the stats
-│       │   ├── priority.py         P1 to P5 scores and marks-per-hour
-│       │   ├── review_scheduler.py spaced-repetition schedule
-│       │   └── readiness.py        readiness snapshot
-│       └── templates/exam-profile.md
-├── dist/exam-study-coach-skill.zip ready-to-upload ZIP for the Claude app
-├── README.md
-├── CHANGELOG.md
+│       ├── SKILL.md                  the instructions Claude follows
+│       ├── scripts/                  small Python helpers that do the maths
+│       └── templates/exam-profile.md form for your exam details
+├── dist/exam-study-coach-skill.zip   ready-to-upload file for the Claude app
+├── CHANGELOG.md                      what changed in each version
 └── LICENSE
 ```
-
-**Requirements:** Python 3 for the helper scripts (pre-installed on macOS and most Linux systems). For scanned PDFs, OCR tools such as `ocrmypdf` or `tesseract` help; Claude can also read scanned pages as images.
-
----
-
-## Privacy
-
-Your materials and progress stay in your own project folder. `init_state.py` puts a `.gitignore` inside `study-state/`, so your progress is never committed if your exam folder is also a git repo. If you also don't want to commit your notes and papers, add `syllabus/`, `question-papers/`, `notes/`, `resources/` and `answers/` to your exam folder's own `.gitignore`.
-
-## Academic integrity
-
-This skill is for learning and exam preparation. Follow your institution's rules, and don't submit work it generates as your own graded work.
 
 ## License
 

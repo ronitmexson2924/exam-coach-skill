@@ -11,7 +11,7 @@
       "name": "exam-study-coach",
       "source": "./plugins/exam-study-coach",
       "description": "Turns your syllabus, notes, PDFs and past papers into an evidence-ranked study plan, then teaches, quizzes, marks answers and tracks progress with spaced repetition and mock tests.",
-      "version": "2.1.0"
+      "version": "2.2.0"
     }
   ]
 }

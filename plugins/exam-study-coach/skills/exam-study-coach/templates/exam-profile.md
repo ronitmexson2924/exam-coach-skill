@@ -8,6 +8,14 @@ Fill in what you know; Claude will fill in the rest after analyzing your papers.
 - Preferred session length (e.g. 50 min + 10 min break):
 - Preferred teaching mode (standard / Socratic / teach-back / ELI5 then exam):
 
+## Study help wanted
+(Claude asks after the first analysis; change any time with `STUDY HELP`.)
+- [ ] Important topics list
+- [ ] Simple summaries of my material
+- [ ] Study resources list (my files + outside resources)
+- [ ] YouTube video links
+- [ ] Topic checklist
+
 ## Exams
 | Subject | Exam type (CAT/FAT/mid/end-sem) | Date | Time | Duration |
 |---|---|---|---|---|

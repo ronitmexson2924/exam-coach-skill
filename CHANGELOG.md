@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.2.0 - 2026-11-02
+- After the first analysis, Claude asks which kinds of help you want (`STUDY HELP`) and remembers the answer in `exam-profile.md`.
+- New `IMPORTANT TOPICS`: the priority list in plain words.
+- New `SIMPLE SUMMARY`: beginner-friendly summaries of your uploaded material, with file and page references.
+- New `RESOURCES` and `VIDEOS`: what to study from for each topic, covering your own files, outside resources and YouTube links. Links are only given once they've been checked; otherwise you get a YouTube search link.
+- New `TOPIC CHECKLIST`: a tick-box list of every syllabus topic.
+- README rewritten in simpler language for students.
+
 ## 2.1.0 - 2026-11-02
 - Added the missing `.claude-plugin/marketplace.json`, so `/plugin marketplace add` works.
 - New `score_from_pyq.py` fills frequency, marks and recency scores from `pyq-stats.csv`.
